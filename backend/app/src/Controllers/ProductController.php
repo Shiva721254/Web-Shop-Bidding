@@ -67,6 +67,12 @@ class ProductController extends Controller
             if ($product->type === 'auction' && ($product->startingPrice === null || $product->startingPrice <= 0)) {
                 return $this->sendErrorResponse('Starting price is required for auction products', 422);
             }
+            if ($product->type === 'auction' && empty($product->endsAt)) {
+                return $this->sendErrorResponse('End date is required for auction products', 422);
+            }
+            if ($product->type === 'auction' && strtotime($product->endsAt) <= time()) {
+                return $this->sendErrorResponse('End date must be in the future', 422);
+            }
 
             $product = $this->productService->create($product);
             return $this->sendSuccessResponse($product, 201);

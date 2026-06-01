@@ -42,6 +42,10 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Starting Price (€) *</label>
             <input v-model.number="form.startingPrice" type="number" step="0.01" min="0.01" required class="input" placeholder="0.00" />
           </div>
+          <div v-if="form.type === 'auction'">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Auction Ends At *</label>
+            <input v-model="form.endsAt" type="datetime-local" required class="input" />
+          </div>
           <p v-if="formError" class="text-red-600 text-sm">{{ formError }}</p>
           <div class="flex gap-3 pt-2">
             <button type="submit" :disabled="saving" class="btn btn-primary flex-1">
@@ -122,17 +126,17 @@ const total      = ref(0)
 const totalPages = ref(0)
 const limit      = 15
 
-const emptyForm = () => ({ title: '', description: '', category: '', type: 'buy_now', price: null, startingPrice: null })
+const emptyForm = () => ({ title: '', description: '', category: '', type: 'buy_now', price: null, startingPrice: null, endsAt: '' })
 const form      = ref(emptyForm())
 
 const formatPrice = (v) => v != null ? new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR' }).format(v) : '—'
 
 function openForm(product = null) {
-  editing.value  = product
+  editing.value   = product
   formError.value = null
   form.value = product
     ? { title: product.title, description: product.description || '', category: product.category || '',
-        type: product.type, price: product.price, startingPrice: product.startingPrice }
+        type: product.type, price: product.price, startingPrice: product.startingPrice, endsAt: '' }
     : emptyForm()
   showForm.value = true
 }
@@ -159,8 +163,9 @@ async function saveProduct() {
       description:   form.value.description,
       category:      form.value.category,
       type:          form.value.type,
-      price:         form.value.type === 'buy_now'  ? form.value.price         : null,
-      startingPrice: form.value.type === 'auction'  ? form.value.startingPrice : null,
+      price:         form.value.type === 'buy_now' ? form.value.price         : null,
+      startingPrice: form.value.type === 'auction' ? form.value.startingPrice : null,
+      endsAt:        form.value.type === 'auction' ? form.value.endsAt        : null,
     }
     let res, body
     if (editing.value) {
