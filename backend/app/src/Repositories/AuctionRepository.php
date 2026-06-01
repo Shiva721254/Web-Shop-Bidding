@@ -16,6 +16,36 @@ class AuctionRepository implements IAuctionRepository
         $this->db = Database::getConnection();
     }
 
+    public function closeExpired(): void
+    {
+        // Mark all open auctions whose end time has passed as closed
+        $this->db->exec("
+            UPDATE auctions
+            SET status = 'closed'
+            WHERE status = 'open' AND ends_at < NOW()
+        ");
+
+        // Set winner_id to the user who placed the highest bid
+        $stmt = $this->db->query("
+            SELECT a.id, b.user_id
+            FROM auctions a
+            JOIN bids b ON b.auction_id = a.id
+            WHERE a.status = 'closed'
+              AND a.winner_id IS NULL
+              AND b.amount = (
+                  SELECT MAX(b2.amount) FROM bids b2 WHERE b2.auction_id = a.id
+              )
+            GROUP BY a.id
+        ");
+
+        $update = $this->db->prepare(
+            'UPDATE auctions SET winner_id = :winner WHERE id = :id'
+        );
+        foreach ($stmt->fetchAll() as $row) {
+            $update->execute([':winner' => $row['user_id'], ':id' => $row['id']]);
+        }
+    }
+
     private const SELECT = '
         SELECT  a.id,
                 a.product_id,
