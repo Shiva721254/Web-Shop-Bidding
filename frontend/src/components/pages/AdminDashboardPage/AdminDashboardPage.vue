@@ -35,12 +35,12 @@
         </div>
       </RouterLink>
 
-      <RouterLink to="/auctions"
+      <RouterLink to="/admin/auctions"
         class="card p-6 flex items-start gap-4 hover:border-purple-200 border border-transparent transition-colors group">
         <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 group-hover:bg-purple-200 transition-colors">🔨</div>
         <div>
-          <p class="font-bold text-gray-900 mb-1">View Auctions</p>
-          <p class="text-sm text-gray-500">Monitor active auctions and bidding activity.</p>
+          <p class="font-bold text-gray-900 mb-1">Monitor Auctions</p>
+          <p class="text-sm text-gray-500">Track all auctions, current bids, bid counts and auction status.</p>
         </div>
       </RouterLink>
     </div>
