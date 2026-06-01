@@ -1,49 +1,187 @@
 <?php
 
-// NOTE: we are using a simplified file based storage for demo purposes
-// For your assignment, you should use a database
-
 namespace App\Repositories;
 
 use App\Models\Auction;
-use App\Utils\JsonStore;
+use App\Framework\Database;
+use PDO;
 
 class AuctionRepository implements IAuctionRepository
 {
-    private JsonStore $store;
-    private const DATA_FILE = __DIR__ . '/../data/auctions.json';
+    private PDO $db;
 
     public function __construct()
     {
-        $this->store = new JsonStore(self::DATA_FILE, Auction::class);
+        $this->db = Database::getConnection();
     }
 
-    /**
-     * @return Auction[]
-     */
-    public function getAll(): array
+    private const SELECT = '
+        SELECT  a.id,
+                a.product_id,
+                p.title,
+                p.description,
+                p.category,
+                p.seller_id,
+                p.starting_price,
+                a.current_bid,
+                a.ends_at,
+                a.status,
+                a.winner_id
+        FROM    auctions a
+        JOIN    products p ON p.id = a.product_id
+    ';
+
+    /** @return Auction[] */
+    public function getAll(array $filters = [], int $page = 1, int $limit = 10): array
     {
-        return $this->store->getAll();
+        $where  = [];
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $where[]          = 'a.status = :status';
+            $params[':status'] = $filters['status'];
+        }
+        if (!empty($filters['category'])) {
+            $where[]            = 'p.category = :category';
+            $params[':category'] = $filters['category'];
+        }
+
+        $sql    = self::SELECT;
+        if ($where) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
+
+        $offset       = ($page - 1) * $limit;
+        $sql         .= ' ORDER BY a.ends_at ASC LIMIT :limit OFFSET :offset';
+        $params[':limit']  = $limit;
+        $params[':offset'] = $offset;
+
+        $stmt = $this->db->prepare($sql);
+        foreach ($params as $key => $value) {
+            $type = is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR;
+            $stmt->bindValue($key, $value, $type);
+        }
+        $stmt->execute();
+
+        return array_map(fn($row) => new Auction($row), $stmt->fetchAll());
+    }
+
+    public function countAll(array $filters = []): int
+    {
+        $where  = [];
+        $params = [];
+
+        if (!empty($filters['status'])) {
+            $where[]           = 'a.status = :status';
+            $params[':status'] = $filters['status'];
+        }
+        if (!empty($filters['category'])) {
+            $where[]             = 'p.category = :category';
+            $params[':category'] = $filters['category'];
+        }
+
+        $sql = 'SELECT COUNT(*) FROM auctions a JOIN products p ON p.id = a.product_id';
+        if ($where) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
     }
 
     public function getById(int $id): ?Auction
     {
-        return $this->store->getById($id);
+        $stmt = $this->db->prepare(self::SELECT . ' WHERE a.id = :id');
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+        return $row ? new Auction($row) : null;
     }
 
     public function create(Auction $auction): Auction
     {
-        $this->store->create($auction);
-        return $auction;
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare('
+                INSERT INTO products (title, description, category, type, starting_price, seller_id)
+                VALUES (:title, :description, :category, \'auction\', :starting_price, :seller_id)
+            ');
+            $stmt->execute([
+                ':title'          => $auction->title,
+                ':description'    => $auction->description,
+                ':category'       => $auction->category,
+                ':starting_price' => $auction->startingPrice,
+                ':seller_id'      => $auction->sellerId,
+            ]);
+            $productId = (int)$this->db->lastInsertId();
+
+            $stmt = $this->db->prepare('
+                INSERT INTO auctions (product_id, current_bid, ends_at, status)
+                VALUES (:product_id, :current_bid, :ends_at, :status)
+            ');
+            $stmt->execute([
+                ':product_id'  => $productId,
+                ':current_bid' => $auction->currentBid,
+                ':ends_at'     => $auction->endsAt,
+                ':status'      => $auction->status,
+            ]);
+            $auction->id        = (int)$this->db->lastInsertId();
+            $auction->productId = $productId;
+
+            $this->db->commit();
+            return $auction;
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 
     public function update(Auction $auction): bool
     {
-        return $this->store->update($auction);
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare('
+                UPDATE products
+                SET title = :title, description = :description, category = :category,
+                    starting_price = :starting_price
+                WHERE id = (SELECT product_id FROM auctions WHERE id = :auction_id)
+            ');
+            $stmt->execute([
+                ':title'          => $auction->title,
+                ':description'    => $auction->description,
+                ':category'       => $auction->category,
+                ':starting_price' => $auction->startingPrice,
+                ':auction_id'     => $auction->id,
+            ]);
+
+            $stmt = $this->db->prepare('
+                UPDATE auctions
+                SET current_bid = :current_bid, ends_at = :ends_at, status = :status
+                WHERE id = :id
+            ');
+            $stmt->execute([
+                ':current_bid' => $auction->currentBid,
+                ':ends_at'     => $auction->endsAt,
+                ':status'      => $auction->status,
+                ':id'          => $auction->id,
+            ]);
+
+            $this->db->commit();
+            return true;
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 
     public function delete(int $id): bool
     {
-        return $this->store->delete($id);
+        $stmt = $this->db->prepare('
+            DELETE p FROM products p
+            JOIN auctions a ON a.product_id = p.id
+            WHERE a.id = :id
+        ');
+        $stmt->execute([':id' => $id]);
+        return $stmt->rowCount() > 0;
     }
 }
