@@ -23,6 +23,9 @@
           <RouterLink v-if="authStore.isLoggedIn" to="/orders" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" active-class="text-blue-600">
             My Orders
           </RouterLink>
+          <RouterLink v-if="authStore.isAdmin" to="/admin" class="px-3 py-1 bg-purple-600 text-white text-sm font-semibold rounded-lg hover:bg-purple-700 transition-colors" active-class="bg-purple-700">
+            Admin
+          </RouterLink>
           <RouterLink v-if="!authStore.isLoggedIn" to="/login" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" active-class="text-blue-600">
             Login
           </RouterLink>
@@ -48,6 +51,7 @@
           <RouterLink to="/products" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">Products</RouterLink>
           <RouterLink to="/cart" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">Cart ({{ cartStore.itemCount }})</RouterLink>
           <RouterLink v-if="authStore.isLoggedIn" to="/orders" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">My Orders</RouterLink>
+          <RouterLink v-if="authStore.isAdmin" to="/admin" class="text-purple-600 font-semibold px-2 py-1" @click="mobileMenuOpen = false">Admin Panel</RouterLink>
           <RouterLink v-if="!authStore.isLoggedIn" to="/login" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">Login</RouterLink>
           <button v-if="authStore.isLoggedIn" @click="logout" class="text-left text-red-600 px-2 py-1">Logout</button>
         </nav>

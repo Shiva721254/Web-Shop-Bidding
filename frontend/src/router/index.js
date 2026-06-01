@@ -38,6 +38,24 @@ const routes = [
     name: 'Cart',
     component: () => import('../components/pages/CartPage/CartPage.vue'),
   },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: () => import('../components/pages/AdminDashboardPage/AdminDashboardPage.vue'),
+    meta: { requiresAdmin: true },
+  },
+  {
+    path: '/admin/products',
+    name: 'AdminProducts',
+    component: () => import('../components/pages/AdminProductsPage/AdminProductsPage.vue'),
+    meta: { requiresAdmin: true },
+  },
+  {
+    path: '/admin/orders',
+    name: 'AdminOrders',
+    component: () => import('../components/pages/AdminOrdersPage/AdminOrdersPage.vue'),
+    meta: { requiresAdmin: true },
+  },
 ]
 
 const router = createRouter({
@@ -48,8 +66,13 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const token = localStorage.getItem('token')
-  if (to.meta.requiresAuth && !token) {
+  const user  = JSON.parse(localStorage.getItem('user') || 'null')
+
+  if ((to.meta.requiresAuth || to.meta.requiresAdmin) && !token) {
     return { name: 'Login', query: { redirect: to.fullPath } }
+  }
+  if (to.meta.requiresAdmin && user?.role !== 'admin') {
+    return { name: 'AuctionArchive' }
   }
 })
 
