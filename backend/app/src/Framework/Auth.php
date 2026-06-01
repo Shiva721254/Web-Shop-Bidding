@@ -2,16 +2,11 @@
 
 namespace App\Framework;
 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
-
 class Auth
 {
-    private static string $algorithm = 'HS256';
-
     private static function secret(): string
     {
-        $secret = $_ENV['JWT_SECRET'] ?? 'changeme-use-env-in-production';
+        $secret = $_ENV['JWT_SECRET'] ?? 'changeme-32-chars-minimum-secret!';
         if (strlen($secret) < 32) {
             throw new \RuntimeException('JWT_SECRET must be at least 32 characters');
         }
@@ -20,20 +15,48 @@ class Auth
 
     public static function generateToken(int $userId, string $email, string $role): string
     {
-        $now     = time();
-        $payload = [
+        $now = time();
+
+        $header  = self::base64UrlEncode(json_encode(['typ' => 'JWT', 'alg' => 'HS256']));
+        $payload = self::base64UrlEncode(json_encode([
             'iat'   => $now,
             'exp'   => $now + 3600,
             'sub'   => $userId,
             'email' => $email,
             'role'  => $role,
-        ];
-        return JWT::encode($payload, self::secret(), self::$algorithm);
+        ]));
+
+        $signature = self::base64UrlEncode(
+            hash_hmac('sha256', "$header.$payload", self::secret(), true)
+        );
+
+        return "$header.$payload.$signature";
     }
 
     public static function validateToken(string $token): object
     {
-        return JWT::decode($token, new Key(self::secret(), self::$algorithm));
+        $parts = explode('.', $token);
+        if (count($parts) !== 3) {
+            throw new \InvalidArgumentException('Invalid token format');
+        }
+
+        [$header, $payload, $signature] = $parts;
+
+        $expectedSig = self::base64UrlEncode(
+            hash_hmac('sha256', "$header.$payload", self::secret(), true)
+        );
+
+        if (!hash_equals($expectedSig, $signature)) {
+            throw new \InvalidArgumentException('Invalid token signature');
+        }
+
+        $data = json_decode(self::base64UrlDecode($payload));
+
+        if (!$data || !isset($data->exp) || $data->exp < time()) {
+            throw new \InvalidArgumentException('Token has expired');
+        }
+
+        return $data;
     }
 
     public static function getTokenFromRequest(): ?string
@@ -56,7 +79,7 @@ class Auth
         }
         try {
             return self::validateToken($token);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             http_response_code(401);
             header('Content-Type: application/json');
             echo json_encode(['error' => 'Invalid or expired token']);
@@ -74,5 +97,15 @@ class Auth
             exit;
         }
         return $payload;
+    }
+
+    private static function base64UrlEncode(string $data): string
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+    }
+
+    private static function base64UrlDecode(string $data): string
+    {
+        return base64_decode(strtr($data, '-_', '+/'));
     }
 }
