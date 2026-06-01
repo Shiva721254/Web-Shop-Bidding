@@ -36,12 +36,19 @@ use function FastRoute\simpleDispatcher;
  * Define the routes for the application.
  */
 $dispatcher = simpleDispatcher(function (RouteCollector $r) {
+    // Product routes
+    $r->addRoute('GET',    '/products',       ['App\Controllers\ProductController', 'getAll']);
+    $r->addRoute('GET',    '/products/{id}',  ['App\Controllers\ProductController', 'get']);
+    $r->addRoute('POST',   '/products',       ['App\Controllers\ProductController', 'create']);
+    $r->addRoute('PUT',    '/products/{id}',  ['App\Controllers\ProductController', 'update']);
+    $r->addRoute('DELETE', '/products/{id}',  ['App\Controllers\ProductController', 'delete']);
+
     // Auction routes
-    $r->addRoute('GET', '/auctions', ['App\Controllers\AuctionController', 'getAll']);
-    $r->addRoute('GET', '/auctions/{id}', ['App\Controllers\AuctionController', 'get']);
-    $r->addRoute('POST', '/auctions', ['App\Controllers\AuctionController', 'create']);
-    $r->addRoute('PUT', '/auctions/{id}', ['App\Controllers\AuctionController', 'update']);
-    $r->addRoute('DELETE', '/auctions/{id}', ['App\Controllers\AuctionController', 'delete']);
+    $r->addRoute('GET',    '/auctions',       ['App\Controllers\AuctionController', 'getAll']);
+    $r->addRoute('GET',    '/auctions/{id}',  ['App\Controllers\AuctionController', 'get']);
+    $r->addRoute('POST',   '/auctions',       ['App\Controllers\AuctionController', 'create']);
+    $r->addRoute('PUT',    '/auctions/{id}',  ['App\Controllers\AuctionController', 'update']);
+    $r->addRoute('DELETE', '/auctions/{id}',  ['App\Controllers\AuctionController', 'delete']);
 });
 
 
