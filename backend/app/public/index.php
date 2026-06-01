@@ -4,28 +4,16 @@ use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use function FastRoute\simpleDispatcher;
 
-/**
- * This is the central route handler of the application.
- * It uses FastRoute to map URLs to controller methods.
- * 
- * See the documentation for FastRoute for more information: https://github.com/nikic/FastRoute
- */
-
 // CORS headers for localhost requests
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 if (preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|::1)(:\d+)?$/', $origin)) {
     header('Access-Control-Allow-Origin: ' . $origin);
-    // Specifies which HTTP methods are allowed when accessing the resource from the origin
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-    // Specifies which HTTP headers can be used when making the actual request
     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
-    // Allows cookies and authentication credentials to be sent with cross-origin requests
     header('Access-Control-Allow-Credentials: true');
-    // Specifies how long (in seconds) the browser can cache the preflight response (24 hours)
     header('Access-Control-Max-Age: 86400');
 }
 
-// Handle preflight OPTIONS requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -33,64 +21,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require __DIR__ . '/../vendor/autoload.php';
 
-/**
- * Define the routes for the application.
- */
 $dispatcher = simpleDispatcher(function (RouteCollector $r) {
-    // Product routes
-    $r->addRoute('GET',    '/products',       ['App\Controllers\ProductController', 'getAll']);
-    $r->addRoute('GET',    '/products/{id}',  ['App\Controllers\ProductController', 'get']);
-    $r->addRoute('POST',   '/products',       ['App\Controllers\ProductController', 'create']);
-    $r->addRoute('PUT',    '/products/{id}',  ['App\Controllers\ProductController', 'update']);
-    $r->addRoute('DELETE', '/products/{id}',  ['App\Controllers\ProductController', 'delete']);
+    // Auth routes (public)
+    $r->addRoute('POST', '/auth/register', ['App\Controllers\AuthController', 'register']);
+    $r->addRoute('POST', '/auth/login',    ['App\Controllers\AuthController', 'login']);
 
-    // Order routes
-    $r->addRoute('GET',  '/orders',                    ['App\Controllers\OrderController', 'getAll']);
-    $r->addRoute('GET',  '/orders/{id}',               ['App\Controllers\OrderController', 'get']);
-    $r->addRoute('GET',  '/users/{userId}/orders',     ['App\Controllers\OrderController', 'getByUser']);
-    $r->addRoute('POST', '/orders',                    ['App\Controllers\OrderController', 'create']);
-    $r->addRoute('PUT',  '/orders/{id}/status',        ['App\Controllers\OrderController', 'updateStatus']);
+    // Product routes
+    $r->addRoute('GET',    '/products',      ['App\Controllers\ProductController', 'getAll']);
+    $r->addRoute('GET',    '/products/{id}', ['App\Controllers\ProductController', 'get']);
+    $r->addRoute('POST',   '/products',      ['App\Controllers\ProductController', 'create']);
+    $r->addRoute('PUT',    '/products/{id}', ['App\Controllers\ProductController', 'update']);
+    $r->addRoute('DELETE', '/products/{id}', ['App\Controllers\ProductController', 'delete']);
+
+    // Auction routes
+    $r->addRoute('GET',    '/auctions',      ['App\Controllers\AuctionController', 'getAll']);
+    $r->addRoute('GET',    '/auctions/{id}', ['App\Controllers\AuctionController', 'get']);
+    $r->addRoute('POST',   '/auctions',      ['App\Controllers\AuctionController', 'create']);
+    $r->addRoute('PUT',    '/auctions/{id}', ['App\Controllers\AuctionController', 'update']);
+    $r->addRoute('DELETE', '/auctions/{id}', ['App\Controllers\AuctionController', 'delete']);
 
     // Bid routes (nested under auctions)
     $r->addRoute('GET',  '/auctions/{auctionId}/bids', ['App\Controllers\BidController', 'getByAuction']);
     $r->addRoute('POST', '/auctions/{auctionId}/bids', ['App\Controllers\BidController', 'create']);
 
-    // Auction routes
-    $r->addRoute('GET',    '/auctions',       ['App\Controllers\AuctionController', 'getAll']);
-    $r->addRoute('GET',    '/auctions/{id}',  ['App\Controllers\AuctionController', 'get']);
-    $r->addRoute('POST',   '/auctions',       ['App\Controllers\AuctionController', 'create']);
-    $r->addRoute('PUT',    '/auctions/{id}',  ['App\Controllers\AuctionController', 'update']);
-    $r->addRoute('DELETE', '/auctions/{id}',  ['App\Controllers\AuctionController', 'delete']);
+    // Order routes
+    $r->addRoute('GET',  '/orders',               ['App\Controllers\OrderController', 'getAll']);
+    $r->addRoute('GET',  '/orders/{id}',           ['App\Controllers\OrderController', 'get']);
+    $r->addRoute('GET',  '/users/{userId}/orders', ['App\Controllers\OrderController', 'getByUser']);
+    $r->addRoute('POST', '/orders',               ['App\Controllers\OrderController', 'create']);
+    $r->addRoute('PUT',  '/orders/{id}/status',   ['App\Controllers\OrderController', 'updateStatus']);
 });
 
-
-/**
- * Get the request method and URI from the server variables and invoke the dispatcher.
- */
 $httpMethod = $_SERVER['REQUEST_METHOD'];
-$uri = strtok($_SERVER['REQUEST_URI'], '?');
-$routeInfo = $dispatcher->dispatch($httpMethod, $uri);
+$uri        = strtok($_SERVER['REQUEST_URI'], '?');
+$routeInfo  = $dispatcher->dispatch($httpMethod, $uri);
 
-/**
- * Switch on the dispatcher result and call the appropriate controller method if found.
- */
 switch ($routeInfo[0]) {
-    // Handle not found routes
     case Dispatcher::NOT_FOUND:
         http_response_code(404);
-        echo 'Not Found';
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Not Found']);
         break;
-    // Handle routes that were invoked with the wrong HTTP method
+
     case Dispatcher::METHOD_NOT_ALLOWED:
         http_response_code(405);
-        echo 'Method Not Allowed';
+        header('Content-Type: application/json');
+        echo json_encode(['error' => 'Method Not Allowed']);
         break;
-    // Handle found routes
+
     case Dispatcher::FOUND:
-        $class = $routeInfo[1][0];
-        $method = $routeInfo[1][1];
-        $controller = new $class();
-        $vars = $routeInfo[2];
+        [$class, $method] = $routeInfo[1];
+        $vars             = $routeInfo[2];
+        $controller       = new $class();
         $controller->$method($vars);
         break;
 }

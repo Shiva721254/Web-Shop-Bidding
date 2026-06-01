@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Services\Interfaces\IProductService;
 use App\Services\ProductService;
 use App\Framework\Controller;
+use App\Framework\Auth;
 
 class ProductController extends Controller
 {
@@ -28,7 +29,7 @@ class ProductController extends Controller
 
             $result = $this->productService->getAll($filters, $page, $limit);
             return $this->sendSuccessResponse($result);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
@@ -43,13 +44,14 @@ class ProductController extends Controller
                 return $this->sendErrorResponse('Product not found', 404);
             }
             return $this->sendSuccessResponse($product);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
 
     public function create()
     {
+        Auth::requireAuth();
         try {
             $product = $this->mapPostDataToClass(Product::class);
 
@@ -70,13 +72,14 @@ class ProductController extends Controller
             return $this->sendSuccessResponse($product, 201);
         } catch (\InvalidArgumentException $e) {
             return $this->sendErrorResponse($e->getMessage(), 400);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
 
     public function update($vars = [])
     {
+        Auth::requireAuth();
         try {
             $id      = (int)($vars['id'] ?? 0);
             $product = $this->productService->getById($id);
@@ -98,13 +101,14 @@ class ProductController extends Controller
             return $this->sendSuccessResponse($updated);
         } catch (\InvalidArgumentException $e) {
             return $this->sendErrorResponse($e->getMessage(), 400);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
 
     public function delete($vars = [])
     {
+        Auth::requireAuth();
         try {
             $id      = (int)($vars['id'] ?? 0);
             $product = $this->productService->getById($id);
@@ -116,7 +120,7 @@ class ProductController extends Controller
                 return $this->sendErrorResponse('Delete failed', 500);
             }
             return $this->sendSuccessResponse(null, 204);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
