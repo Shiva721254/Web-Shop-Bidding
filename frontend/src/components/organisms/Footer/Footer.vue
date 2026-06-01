@@ -1,70 +1,43 @@
 <template>
-  <footer class="bg-gray-50 border-t border-gray-200 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div class="col-span-1 md:col-span-2">
-          <Heading :level="3" size="lg" class="mb-4">Bid Shop</Heading>
-          <Text as="p" size="sm" color="muted">
-            Browse current auctions and discover your next purchase.
-          </Text>
+  <footer class="bg-gray-900 text-gray-300 mt-auto">
+    <div class="page-container py-12">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="lg:col-span-2">
+          <p class="text-white font-bold text-xl mb-3">Bid Shop</p>
+          <p class="text-gray-400 text-sm leading-relaxed max-w-sm">
+            A web shop where you can buy products directly or bid in live auctions.
+            Find unique items at the best prices.
+          </p>
         </div>
 
         <div>
-          <Heading :level="4" size="md" class="mb-4">Quick Links</Heading>
-          <ul class="space-y-2">
-            <li v-for="link in quickLinks" :key="link.name">
-              <a :href="link.href" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">
-                {{ link.name }}
-              </a>
-            </li>
+          <p class="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Shop</p>
+          <ul class="space-y-2 text-sm">
+            <li><RouterLink to="/auctions" class="hover:text-white transition-colors">Auctions</RouterLink></li>
+            <li><RouterLink to="/products" class="hover:text-white transition-colors">Products</RouterLink></li>
+            <li><RouterLink to="/cart"     class="hover:text-white transition-colors">Cart</RouterLink></li>
           </ul>
         </div>
 
         <div>
-          <Heading :level="4" size="md" class="mb-4">Legal</Heading>
-          <ul class="space-y-2">
-            <li v-for="link in legalLinks" :key="link.name">
-              <a :href="link.href" class="text-gray-600 hover:text-blue-600 transition-colors text-sm">
-                {{ link.name }}
-              </a>
-            </li>
+          <p class="text-white font-semibold text-sm mb-4 uppercase tracking-wide">Account</p>
+          <ul class="space-y-2 text-sm">
+            <li><RouterLink to="/login"    class="hover:text-white transition-colors">Log In</RouterLink></li>
+            <li><RouterLink to="/register" class="hover:text-white transition-colors">Register</RouterLink></li>
+            <li><RouterLink to="/orders"   class="hover:text-white transition-colors">My Orders</RouterLink></li>
           </ul>
         </div>
       </div>
 
-      <div class="mt-8 pt-8 border-t border-gray-200">
-        <Text as="p" size="sm" color="muted" class="text-center">
-          &copy; {{ currentYear }} Bid Shop. All rights reserved.
-        </Text>
+      <div class="mt-10 pt-6 border-t border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-2 text-xs text-gray-500">
+        <p>&copy; {{ year }} Bid Shop. All rights reserved.</p>
+        <p>Built with Vue 3 · PHP 8.3 · MariaDB · Tailwind CSS</p>
       </div>
     </div>
   </footer>
 </template>
 
 <script setup>
-import { computed } from "vue";
-import Heading from "../../atoms/Heading/Heading.vue";
-import Text from "../../atoms/Text/Text.vue";
-
-defineProps({
-  quickLinks: {
-    type: Array,
-    default: () => [
-      { name: "Home", href: "/" },
-      { name: "Auctions", href: "/auctions" },
-      { name: "Categories", href: "/categories" },
-      { name: "About", href: "/about" },
-    ],
-  },
-  legalLinks: {
-    type: Array,
-    default: () => [
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Terms of Service", href: "/terms" },
-      { name: "Cookie Policy", href: "/cookies" },
-    ],
-  },
-});
-
-const currentYear = computed(() => new Date().getFullYear());
+import { RouterLink } from 'vue-router'
+const year = new Date().getFullYear()
 </script>
