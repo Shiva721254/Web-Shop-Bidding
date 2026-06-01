@@ -1,33 +1,13 @@
 # Atoms
 
-**Basic building blocks** that cannot be broken down further without losing their meaning.
+Smallest reusable UI building blocks.
 
-## What belongs here?
+## Current Components
 
-- Buttons
-- Inputs
-- Labels
-- Icons
-- Headings (h1, h2, etc.)
-- Links
-- Images
-- Text elements
+- `Badge`
+- `Button`
+- `DateDisplay`
+- `Heading`
+- `Text`
 
-## Characteristics
-
-- ✅ Highly reusable
-- ✅ Minimal dependencies
-- ✅ Single, focused purpose
-- ✅ No business logic
-- ✅ Styling and basic interactivity only
-
-## Example
-
-```vue
-<!-- Button.vue - An atom -->
-<template>
-  <button :class="['btn', `btn-${variant}`]" @click="$emit('click')">
-    <slot></slot>
-  </button>
-</template>
-```
+Use this folder for presentational pieces with minimal dependencies.

@@ -1,38 +1,9 @@
 # Templates
 
-**Page-level objects** that place components into a layout.
+Layout-level structures that arrange components into a page skeleton.
 
-## What belongs here?
+## Current Components
 
-- Page layouts
-- Grid systems
-- Content structures
-- Layout wrappers
+- `AuctionArchive`
 
-## Characteristics
-
-- ✅ Focus on page structure, not content
-- ✅ Usually use placeholder content
-- ✅ Define the skeleton of a page
-- ✅ Show how components work together in context
-- ✅ Demonstrate responsive behavior
-
-## Example
-
-```vue
-<!-- MainLayout.vue - A template -->
-<template>
-  <div class="main-layout">
-    <Header />
-    <main class="content">
-      <aside class="sidebar">
-        <slot name="sidebar"></slot>
-      </aside>
-      <section class="main-content">
-        <slot name="content"></slot>
-      </section>
-    </main>
-    <Footer />
-  </div>
-</template>
-```
+Use this folder for layout wrappers and page shells that stay content-agnostic.

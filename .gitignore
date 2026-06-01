@@ -1,0 +1,19 @@
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# Dependencies and generated output
+node_modules/
+vendor/
+dist/
+storybook-static/
+coverage/
+
+# Local configuration
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log

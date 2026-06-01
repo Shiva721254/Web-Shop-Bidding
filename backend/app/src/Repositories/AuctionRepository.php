@@ -5,41 +5,41 @@
 
 namespace App\Repositories;
 
-use App\Models\Article;
+use App\Models\Auction;
 use App\Utils\JsonStore;
 
-class ArticleRepository implements IArticleRepository
+class AuctionRepository implements IAuctionRepository
 {
     private JsonStore $store;
-    private const DATA_FILE = __DIR__ . '/../data/articles.json';
+    private const DATA_FILE = __DIR__ . '/../data/auctions.json';
 
     public function __construct()
     {
-        $this->store = new JsonStore(self::DATA_FILE, Article::class);
+        $this->store = new JsonStore(self::DATA_FILE, Auction::class);
     }
 
     /**
-     * @return Article[]
+     * @return Auction[]
      */
     public function getAll(): array
     {
         return $this->store->getAll();
     }
 
-    public function getById(int $id): ?Article
+    public function getById(int $id): ?Auction
     {
         return $this->store->getById($id);
     }
 
-    public function create(Article $article): Article
+    public function create(Auction $auction): Auction
     {
-        $this->store->create($article);
-        return $article;
+        $this->store->create($auction);
+        return $auction;
     }
 
-    public function update(Article $article): bool
+    public function update(Auction $auction): bool
     {
-        return $this->store->update($article);
+        return $this->store->update($auction);
     }
 
     public function delete(int $id): bool
