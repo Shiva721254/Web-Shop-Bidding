@@ -33,6 +33,11 @@ const routes = [
     component: () => import('../components/pages/MyOrdersPage/MyOrdersPage.vue'),
     meta: { requiresAuth: true },
   },
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: () => import('../components/pages/CartPage/CartPage.vue'),
+  },
 ]
 
 const router = createRouter({

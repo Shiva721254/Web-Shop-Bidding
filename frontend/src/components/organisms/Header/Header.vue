@@ -8,50 +8,33 @@
         </RouterLink>
 
         <nav class="hidden md:flex items-center space-x-8">
-          <RouterLink
-            to="/auctions"
-            class="text-gray-700 hover:text-blue-600 transition-colors font-medium"
-            active-class="text-blue-600"
-          >
+          <RouterLink to="/auctions" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" active-class="text-blue-600">
             Auctions
           </RouterLink>
-          <RouterLink
-            to="/products"
-            class="text-gray-700 hover:text-blue-600 transition-colors font-medium"
-            active-class="text-blue-600"
-          >
+          <RouterLink to="/products" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" active-class="text-blue-600">
             Products
           </RouterLink>
-          <RouterLink
-            v-if="isLoggedIn"
-            to="/orders"
-            class="text-gray-700 hover:text-blue-600 transition-colors font-medium"
-            active-class="text-blue-600"
-          >
+          <RouterLink to="/cart" class="relative text-gray-700 hover:text-blue-600 transition-colors font-medium" active-class="text-blue-600">
+            Cart
+            <span v-if="cartStore.itemCount > 0" class="absolute -top-2 -right-3 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {{ cartStore.itemCount }}
+            </span>
+          </RouterLink>
+          <RouterLink v-if="authStore.isLoggedIn" to="/orders" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" active-class="text-blue-600">
             My Orders
           </RouterLink>
-          <RouterLink
-            v-if="!isLoggedIn"
-            to="/login"
-            class="text-gray-700 hover:text-blue-600 transition-colors font-medium"
-            active-class="text-blue-600"
-          >
+          <RouterLink v-if="!authStore.isLoggedIn" to="/login" class="text-gray-700 hover:text-blue-600 transition-colors font-medium" active-class="text-blue-600">
             Login
           </RouterLink>
-          <button
-            v-if="isLoggedIn"
-            @click="logout"
-            class="text-gray-700 hover:text-red-600 transition-colors font-medium"
-          >
+          <span v-if="authStore.isLoggedIn" class="text-sm text-gray-500">
+            {{ authStore.user?.name }}
+          </span>
+          <button v-if="authStore.isLoggedIn" @click="logout" class="text-gray-700 hover:text-red-600 transition-colors font-medium">
             Logout
           </button>
         </nav>
 
-        <button
-          class="md:hidden text-gray-700 hover:text-blue-600 transition-colors"
-          @click="mobileMenuOpen = !mobileMenuOpen"
-          aria-label="Toggle menu"
-        >
+        <button class="md:hidden text-gray-700 hover:text-blue-600" @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle menu">
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path v-if="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -63,9 +46,10 @@
         <nav class="flex flex-col space-y-2">
           <RouterLink to="/auctions" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">Auctions</RouterLink>
           <RouterLink to="/products" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">Products</RouterLink>
-          <RouterLink v-if="isLoggedIn" to="/orders" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">My Orders</RouterLink>
-          <RouterLink v-if="!isLoggedIn" to="/login" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">Login</RouterLink>
-          <button v-if="isLoggedIn" @click="logout" class="text-left text-red-600 px-2 py-1">Logout</button>
+          <RouterLink to="/cart" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">Cart ({{ cartStore.itemCount }})</RouterLink>
+          <RouterLink v-if="authStore.isLoggedIn" to="/orders" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">My Orders</RouterLink>
+          <RouterLink v-if="!authStore.isLoggedIn" to="/login" class="text-gray-700 hover:text-blue-600 px-2 py-1" @click="mobileMenuOpen = false">Login</RouterLink>
+          <button v-if="authStore.isLoggedIn" @click="logout" class="text-left text-red-600 px-2 py-1">Logout</button>
         </nav>
       </div>
     </div>
@@ -73,16 +57,18 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
+import { useAuthStore } from '../../../stores/auth.js'
+import { useCartStore } from '../../../stores/cart.js'
 
-const router = useRouter()
+const router        = useRouter()
+const authStore     = useAuthStore()
+const cartStore     = useCartStore()
 const mobileMenuOpen = ref(false)
-const isLoggedIn = computed(() => !!localStorage.getItem('token'))
 
 function logout() {
-  localStorage.removeItem('token')
-  localStorage.removeItem('user')
+  authStore.logout()
   mobileMenuOpen.value = false
   router.push('/login')
 }
