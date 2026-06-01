@@ -51,7 +51,7 @@ class ProductController extends Controller
 
     public function create()
     {
-        Auth::requireAuth();
+        Auth::requireRole('admin');
         try {
             $product = $this->mapPostDataToClass(Product::class);
 
@@ -79,7 +79,7 @@ class ProductController extends Controller
 
     public function update($vars = [])
     {
-        Auth::requireAuth();
+        Auth::requireRole('admin');
         try {
             $id      = (int)($vars['id'] ?? 0);
             $product = $this->productService->getById($id);
@@ -108,7 +108,7 @@ class ProductController extends Controller
 
     public function delete($vars = [])
     {
-        Auth::requireAuth();
+        Auth::requireRole('admin');
         try {
             $id      = (int)($vars['id'] ?? 0);
             $product = $this->productService->getById($id);
