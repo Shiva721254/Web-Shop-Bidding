@@ -51,7 +51,7 @@ class AuctionController extends Controller
 
     public function create()
     {
-        Auth::requireAuth();
+        Auth::requireRole('admin');
         try {
             $auction = $this->mapPostDataToClass(Auction::class);
 
@@ -76,7 +76,7 @@ class AuctionController extends Controller
 
     public function update($vars = [])
     {
-        Auth::requireAuth();
+        Auth::requireRole('admin');
         try {
             $id      = (int)($vars['id'] ?? 0);
             $auction = $this->mapPostDataToClass(Auction::class);
@@ -98,7 +98,7 @@ class AuctionController extends Controller
 
     public function delete($vars = [])
     {
-        Auth::requireAuth();
+        Auth::requireRole('admin');
         try {
             $id = (int)($vars['id'] ?? 0);
             if (!$this->auctionService->getById($id)) {
