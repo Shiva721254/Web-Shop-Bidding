@@ -17,15 +17,11 @@ const props = defineProps({
 
 const categoryVariant = computed(() => {
   const variantMap = {
-    'Technology': 'primary',
-    'Environment': 'success',
-    'Health': 'warning',
-    'Finance': 'secondary',
-    'History': 'default',
-    'Gaming': 'primary',
-    'Automotive': 'default',
-    'Travel': 'success',
-    'Science': 'secondary',
+    Electronics: 'primary',
+    Sports: 'success',
+    Home: 'warning',
+    Fashion: 'secondary',
+    Collectibles: 'default',
   };
   
   return variantMap[props.category] || 'default';

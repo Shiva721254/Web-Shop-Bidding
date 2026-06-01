@@ -5,28 +5,28 @@
     <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
       <div class="mb-8">
         <Heading :level="1" size="3xl" class="mb-2">
-          Article Archive
+          Active Auctions
         </Heading>
         <Text as="p" size="lg" color="muted">
-          Browse our collection of articles
+          Browse listings and place your next bid
         </Text>
       </div>
       
       
-      <!-- Article Grid -->
-      <div v-if="articles && articles.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <ArticleCard
-          v-for="article in articles"
-          :key="article.id"
-          :article="article"
-          @click="handleArticleClick"
+      <!-- Auction Grid -->
+      <div v-if="auctions && auctions.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <AuctionCard
+          v-for="auction in auctions"
+          :key="auction.id"
+          :auction="auction"
+          @click="handleAuctionClick"
         />
       </div>
       
       <!-- Empty State -->
       <div v-else class="text-center py-12">
         <Text as="p" size="lg" color="muted">
-          No articles found.
+          No auctions found.
         </Text>
       </div>
       
@@ -42,12 +42,12 @@
 <script setup>
 import Header from '../../organisms/Header/Header.vue';
 import Footer from '../../organisms/Footer/Footer.vue';
-import ArticleCard from '../../organisms/ArticleCard/ArticleCard.vue';
+import AuctionCard from '../../organisms/AuctionCard/AuctionCard.vue';
 import Heading from '../../atoms/Heading/Heading.vue';
 import Text from '../../atoms/Text/Text.vue';
 
 const props = defineProps({
-  articles: {
+  auctions: {
     type: Array,
     default: () => [],
   },
@@ -55,7 +55,7 @@ const props = defineProps({
     type: Array,
     default: () => [
       { name: 'Home', href: '/' },
-      { name: 'Articles', href: '/articles' },
+      { name: 'Auctions', href: '/auctions' },
       { name: 'About', href: '/about' },
       { name: 'Contact', href: '/contact' },
     ],
@@ -64,7 +64,7 @@ const props = defineProps({
     type: Array,
     default: () => [
       { name: 'Home', href: '/' },
-      { name: 'Articles', href: '/articles' },
+      { name: 'Auctions', href: '/auctions' },
       { name: 'Categories', href: '/categories' },
       { name: 'About', href: '/about' },
     ],
@@ -87,9 +87,9 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['article-click']);
+const emit = defineEmits(['auction-click']);
 
-const handleArticleClick = (articleId) => {
-  emit('article-click', articleId);
+const handleAuctionClick = (auctionId) => {
+  emit('auction-click', auctionId);
 };
 </script>

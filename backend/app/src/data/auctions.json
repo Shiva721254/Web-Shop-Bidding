@@ -1,0 +1,35 @@
+[
+    {
+        "id": 1,
+        "title": "Vintage Mechanical Keyboard",
+        "seller": "Alex Morgan",
+        "category": "Electronics",
+        "endsAt": "2026-06-08T18:00:00+02:00",
+        "description": "A restored mechanical keyboard with original keycaps and a tested USB adapter.",
+        "startingPrice": 45,
+        "currentBid": 72.5,
+        "status": "open"
+    },
+    {
+        "id": 2,
+        "title": "Road Bike With Aluminum Frame",
+        "seller": "Samira de Vries",
+        "category": "Sports",
+        "endsAt": "2026-06-10T20:30:00+02:00",
+        "description": "A lightweight road bike in good condition. Includes bottle cages and spare inner tubes.",
+        "startingPrice": 180,
+        "currentBid": 245,
+        "status": "open"
+    },
+    {
+        "id": 3,
+        "title": "Handmade Oak Coffee Table",
+        "seller": "Chris Janssen",
+        "category": "Home",
+        "endsAt": "2026-06-12T19:15:00+02:00",
+        "description": "Solid oak coffee table made by a local woodworker. Minor signs of use.",
+        "startingPrice": 90,
+        "currentBid": 110,
+        "status": "open"
+    }
+]
