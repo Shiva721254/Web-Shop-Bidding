@@ -2,25 +2,25 @@
 
 namespace App\Controllers;
 
-use App\Models\Article;
-use App\Services\IArticleService;
-use App\Services\ArticleService;
+use App\Models\Auction;
+use App\Services\IAuctionService;
+use App\Services\AuctionService;
 use App\Framework\Controller;
 
-class ArticleController extends Controller
+class AuctionController extends Controller
 {
-    private IArticleService $articleService;
+    private IAuctionService $auctionService;
 
     public function __construct()
     {
-        $this->articleService = new ArticleService();
+        $this->auctionService = new AuctionService();
     }
 
     public function getAll()
     {
         try {
-            $articles = $this->articleService->getAll();
-            return $this->sendSuccessResponse($articles);
+            $auctions = $this->auctionService->getAll();
+            return $this->sendSuccessResponse($auctions);
         } catch (\Exception $e) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
@@ -30,12 +30,12 @@ class ArticleController extends Controller
     {
         try {
             $id = (int)($vars['id'] ?? 0);
-            $article = $this->articleService->getById($id);
+            $auction = $this->auctionService->getById($id);
             
-            if (!$article) {
-                return $this->sendErrorResponse('Article not found', 404);
+            if (!$auction) {
+                return $this->sendErrorResponse('Auction not found', 404);
             }
-            return $this->sendSuccessResponse($article);
+            return $this->sendSuccessResponse($auction);
         } catch (\Exception $e) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
@@ -44,11 +44,10 @@ class ArticleController extends Controller
     public function create()
     {
         try {
-            $article = $this->mapPostDataToClass(Article::class);
-            $article = $this->articleService->create($article);
-            return $this->sendSuccessResponse($article, 201);
+            $auction = $this->mapPostDataToClass(Auction::class);
+            $auction = $this->auctionService->create($auction);
+            return $this->sendSuccessResponse($auction, 201);
         } catch (\Exception $e) {
-            var_dump($e->getMessage());
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
@@ -56,11 +55,13 @@ class ArticleController extends Controller
     public function update($vars = [])
     {
         try {
-            $article = $this->mapPostDataToClass(Article::class);
+            $auction = $this->mapPostDataToClass(Auction::class);
             $id = (int)($vars['id'] ?? 0);
-            $article->id = $id;
-            $this->articleService->update($article);
-            return $this->sendSuccessResponse($article);
+            $auction->id = $id;
+            if (!$this->auctionService->update($auction)) {
+                return $this->sendErrorResponse('Auction not found', 404);
+            }
+            return $this->sendSuccessResponse($auction);
         } catch (\Exception $e) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
@@ -70,7 +71,9 @@ class ArticleController extends Controller
     {
         try {
             $id = (int)($vars['id'] ?? 0);
-            $this->articleService->delete($id);
+            if (!$this->auctionService->delete($id)) {
+                return $this->sendErrorResponse('Auction not found', 404);
+            }
             return $this->sendSuccessResponse();
         } catch (\Exception $e) {
             return $this->sendErrorResponse('Internal server error', 500);

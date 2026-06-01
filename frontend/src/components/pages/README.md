@@ -1,36 +1,9 @@
 # Pages
 
-**Specific instances of templates** with real content.
+Route-level views with real content and page-specific behavior.
 
-## What belongs here?
+## Current Components
 
-- Home page
-- About page
-- Product detail page
-- User profile page
-- Contact page
+- `AuctionArchivePage`
 
-## Characteristics
-
-- ✅ Final, concrete pages users interact with
-- ✅ Combine templates with real content and data
-- ✅ May fetch data from APIs
-- ✅ Handle page-specific logic
-- ✅ Usually route-specific
-
-## Example
-
-```vue
-<!-- HomePage.vue - A page -->
-<template>
-  <MainLayout>
-    <template #content>
-      <HeroSection :title="heroTitle" :subtitle="heroSubtitle" />
-      <ProductList :products="featuredProducts" />
-    </template>
-    <template #sidebar>
-      <CategoryFilter />
-    </template>
-  </MainLayout>
-</template>
-```
+Keep pages thin and focused on assembling data and layout for a route.
