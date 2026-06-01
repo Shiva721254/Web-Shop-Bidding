@@ -85,21 +85,40 @@ class ProductRepository implements IProductRepository
 
     public function create(Product $product): Product
     {
-        $stmt = $this->db->prepare('
-            INSERT INTO products (title, description, category, type, price, starting_price, seller_id)
-            VALUES (:title, :description, :category, :type, :price, :starting_price, :seller_id)
-        ');
-        $stmt->execute([
-            ':title'          => $product->title,
-            ':description'    => $product->description,
-            ':category'       => $product->category,
-            ':type'           => $product->type,
-            ':price'          => $product->price,
-            ':starting_price' => $product->startingPrice,
-            ':seller_id'      => $product->sellerId,
-        ]);
-        $product->id = (int)$this->db->lastInsertId();
-        return $product;
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare('
+                INSERT INTO products (title, description, category, type, price, starting_price, seller_id)
+                VALUES (:title, :description, :category, :type, :price, :starting_price, :seller_id)
+            ');
+            $stmt->execute([
+                ':title'          => $product->title,
+                ':description'    => $product->description,
+                ':category'       => $product->category,
+                ':type'           => $product->type,
+                ':price'          => $product->price,
+                ':starting_price' => $product->startingPrice,
+                ':seller_id'      => $product->sellerId,
+            ]);
+            $product->id = (int)$this->db->lastInsertId();
+
+            if ($product->type === 'auction') {
+                $stmt = $this->db->prepare('
+                    INSERT INTO auctions (product_id, current_bid, ends_at, status)
+                    VALUES (:product_id, NULL, :ends_at, \'open\')
+                ');
+                $stmt->execute([
+                    ':product_id' => $product->id,
+                    ':ends_at'    => $product->endsAt,
+                ]);
+            }
+
+            $this->db->commit();
+            return $product;
+        } catch (\Exception $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 
     public function update(Product $product): bool

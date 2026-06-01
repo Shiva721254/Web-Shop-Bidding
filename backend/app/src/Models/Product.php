@@ -12,7 +12,8 @@ class Product
     public ?float  $price        = null;
     public ?float  $startingPrice = null;
     public ?int    $sellerId     = null;
-    public ?string $createdAt    = null;
+    public ?string $endsAt      = null;
+    public ?string $createdAt   = null;
 
     public function __construct(array $data = [])
     {
@@ -24,6 +25,7 @@ class Product
         $this->price         = isset($data['price'])          ? (float)$data['price']         : null;
         $this->startingPrice = isset($data['starting_price']) ? (float)$data['starting_price'] : null;
         $this->sellerId      = isset($data['seller_id'])      ? (int)$data['seller_id']       : null;
+        $this->endsAt        = $data['ends_at']               ?? $data['endsAt']               ?? null;
         $this->createdAt     = $data['created_at']            ?? null;
     }
 }
