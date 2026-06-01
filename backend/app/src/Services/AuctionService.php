@@ -18,6 +18,8 @@ class AuctionService implements IAuctionService
 
     public function getAll(array $filters = [], int $page = 1, int $limit = 10): array
     {
+        $this->repository->closeExpired();
+
         $data  = $this->repository->getAll($filters, $page, $limit);
         $total = $this->repository->countAll($filters);
 
@@ -31,6 +33,7 @@ class AuctionService implements IAuctionService
 
     public function getById(int $id): ?Auction
     {
+        $this->repository->closeExpired();
         return $this->repository->getById($id);
     }
 
