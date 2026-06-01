@@ -56,6 +56,12 @@ const routes = [
     component: () => import('../components/pages/AdminOrdersPage/AdminOrdersPage.vue'),
     meta: { requiresAdmin: true },
   },
+  {
+    path: '/admin/auctions',
+    name: 'AdminAuctions',
+    component: () => import('../components/pages/AdminAuctionsPage/AdminAuctionsPage.vue'),
+    meta: { requiresAdmin: true },
+  },
 ]
 
 const router = createRouter({
