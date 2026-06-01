@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Models\Product;
-use App\Repositories\IProductRepository;
+use App\Repositories\Interfaces\IProductRepository;
 use App\Repositories\ProductRepository;
+use App\Services\Interfaces\IProductService;
 
 class ProductService implements IProductService
 {

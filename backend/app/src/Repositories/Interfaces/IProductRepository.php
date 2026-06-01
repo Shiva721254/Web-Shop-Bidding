@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Services;
+namespace App\Repositories\Interfaces;
 
 use App\Models\Product;
 
-interface IProductService
+interface IProductRepository
 {
-    /** @return array{data: Product[], total: int, page: int, limit: int} */
+    /** @return Product[] */
     public function getAll(array $filters = [], int $page = 1, int $limit = 10): array;
+    public function countAll(array $filters = []): int;
     public function getById(int $id): ?Product;
     public function create(Product $product): Product;
     public function update(Product $product): bool;

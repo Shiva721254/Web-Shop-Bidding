@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Product;
 use App\Framework\Database;
+use App\Repositories\Interfaces\IProductRepository;
 use PDO;
 
 class ProductRepository implements IProductRepository

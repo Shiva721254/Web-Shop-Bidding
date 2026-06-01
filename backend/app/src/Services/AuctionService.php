@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Models\Auction;
-use App\Repositories\IAuctionRepository;
+use App\Repositories\Interfaces\IAuctionRepository;
 use App\Repositories\AuctionRepository;
+use App\Services\Interfaces\IAuctionService;
 
 class AuctionService implements IAuctionService
 {

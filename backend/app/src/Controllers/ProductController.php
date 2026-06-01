@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Product;
-use App\Services\IProductService;
+use App\Services\Interfaces\IProductService;
 use App\Services\ProductService;
 use App\Framework\Controller;
 
