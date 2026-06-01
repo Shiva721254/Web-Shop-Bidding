@@ -4,9 +4,14 @@ use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
 use function FastRoute\simpleDispatcher;
 
-// CORS headers for localhost requests
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
-if (preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|::1)(:\d+)?$/', $origin)) {
+// CORS — allow localhost (dev) and the configured production origin
+$origin          = $_SERVER['HTTP_ORIGIN'] ?? '';
+$productionOrigin = $_ENV['ALLOWED_ORIGIN'] ?? '';
+
+$isLocalhost  = (bool) preg_match('/^https?:\/\/(localhost|127\.0\.0\.1|::1)(:\d+)?$/', $origin);
+$isProduction = $productionOrigin !== '' && $origin === $productionOrigin;
+
+if ($isLocalhost || $isProduction) {
     header('Access-Control-Allow-Origin: ' . $origin);
     header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
