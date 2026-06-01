@@ -1,61 +1,53 @@
 <template>
-  <div>
-    <div v-if="loading" class="min-h-screen flex items-center justify-center">
-      <p class="text-gray-600">Loading auctions...</p>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div v-if="loading" class="flex items-center justify-center py-24">
+      <p class="text-gray-500 text-lg">Loading auctions...</p>
     </div>
 
-    <div v-else-if="error" class="min-h-screen flex items-center justify-center">
-      <div class="text-center max-w-md">
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">Error Loading Auctions</h2>
-        <p class="text-gray-600 mb-4">{{ error }}</p>
-        <button
-          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          @click="fetchAuctions"
-        >
-          Try Again
-        </button>
-      </div>
+    <div v-else-if="error" class="flex flex-col items-center justify-center py-24 gap-4">
+      <p class="text-red-600 font-medium">{{ error }}</p>
+      <button
+        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        @click="fetchAuctions"
+      >
+        Try Again
+      </button>
     </div>
 
     <AuctionArchive
       v-else
       :auctions="auctions"
-      @auction-click="handleAuctionClick"
+      @auction-click="(id) => router.push({ name: 'AuctionDetail', params: { id } })"
     />
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import AuctionArchive from "../../templates/AuctionArchive/AuctionArchive.vue";
-import { get } from "../../../utils/api.js";
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import AuctionArchive from '../../templates/AuctionArchive/AuctionArchive.vue'
+import { get } from '../../../utils/api.js'
 
-const auctions = ref([]);
-const loading = ref(true);
-const error = ref(null);
+const router = useRouter()
+const auctions = ref([])
+const loading  = ref(true)
+const error    = ref(null)
 
 const fetchAuctions = async () => {
-  loading.value = true;
-  error.value = null;
-
+  loading.value = true
+  error.value   = null
   try {
-    const response = await get("/auctions");
-    if (!response.ok) {
-      throw new Error(`Failed to fetch auctions: ${response.status} ${response.statusText}`);
-    }
-    auctions.value = await response.json();
+    const res  = await get('/auctions')
+    const body = await res.json()
+    if (!res.ok) throw new Error(body.error || 'Failed to fetch auctions')
+    auctions.value = body.data ?? body
   } catch (err) {
-    console.error("Error fetching auctions:", err);
-    error.value = err.message || "Failed to load auctions. Please try again later.";
-    auctions.value = [];
+    error.value    = err.message
+    auctions.value = []
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
-const handleAuctionClick = (auctionId) => {
-  console.log("Auction clicked:", auctionId);
-};
-
-onMounted(fetchAuctions);
+onMounted(fetchAuctions)
 </script>
