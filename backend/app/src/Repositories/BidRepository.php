@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Bid;
 use App\Framework\Database;
+use App\Repositories\Interfaces\IBidRepository;
 use PDO;
 
 class BidRepository implements IBidRepository

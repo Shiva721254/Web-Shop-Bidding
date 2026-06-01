@@ -3,10 +3,11 @@
 namespace App\Services;
 
 use App\Models\Bid;
-use App\Repositories\IBidRepository;
+use App\Repositories\Interfaces\IBidRepository;
 use App\Repositories\BidRepository;
-use App\Repositories\IAuctionRepository;
+use App\Repositories\Interfaces\IAuctionRepository;
 use App\Repositories\AuctionRepository;
+use App\Services\Interfaces\IBidService;
 
 class BidService implements IBidService
 {

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Services\IOrderService;
+use App\Services\Interfaces\IOrderService;
 use App\Services\OrderService;
 use App\Framework\Controller;
 

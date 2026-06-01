@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Framework\Database;
+use App\Repositories\Interfaces\IOrderRepository;
 use PDO;
 
 class OrderRepository implements IOrderRepository

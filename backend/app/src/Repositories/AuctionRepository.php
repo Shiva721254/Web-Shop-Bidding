@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Auction;
 use App\Framework\Database;
+use App\Repositories\Interfaces\IAuctionRepository;
 use PDO;
 
 class AuctionRepository implements IAuctionRepository
