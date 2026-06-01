@@ -6,6 +6,7 @@ use App\Models\Auction;
 use App\Services\Interfaces\IAuctionService;
 use App\Services\AuctionService;
 use App\Framework\Controller;
+use App\Framework\Auth;
 
 class AuctionController extends Controller
 {
@@ -28,7 +29,7 @@ class AuctionController extends Controller
 
             $result = $this->auctionService->getAll($filters, $page, $limit);
             return $this->sendSuccessResponse($result);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
@@ -43,13 +44,14 @@ class AuctionController extends Controller
                 return $this->sendErrorResponse('Auction not found', 404);
             }
             return $this->sendSuccessResponse($auction);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
 
     public function create()
     {
+        Auth::requireAuth();
         try {
             $auction = $this->mapPostDataToClass(Auction::class);
 
@@ -67,13 +69,14 @@ class AuctionController extends Controller
             return $this->sendSuccessResponse($auction, 201);
         } catch (\InvalidArgumentException $e) {
             return $this->sendErrorResponse($e->getMessage(), 400);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
 
     public function update($vars = [])
     {
+        Auth::requireAuth();
         try {
             $id      = (int)($vars['id'] ?? 0);
             $auction = $this->mapPostDataToClass(Auction::class);
@@ -88,13 +91,14 @@ class AuctionController extends Controller
             return $this->sendSuccessResponse($auction);
         } catch (\InvalidArgumentException $e) {
             return $this->sendErrorResponse($e->getMessage(), 400);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
 
     public function delete($vars = [])
     {
+        Auth::requireAuth();
         try {
             $id = (int)($vars['id'] ?? 0);
             if (!$this->auctionService->getById($id)) {
@@ -104,7 +108,7 @@ class AuctionController extends Controller
                 return $this->sendErrorResponse('Delete failed', 500);
             }
             return $this->sendSuccessResponse(null, 204);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }

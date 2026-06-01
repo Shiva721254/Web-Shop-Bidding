@@ -1,10 +1,11 @@
 USE developmentdb;
 
--- Admin user (password: admin123)
--- Customer user (password: customer123)
+-- Admin password:    password
+-- Customer password: password
+-- Hash: password_hash('password', PASSWORD_BCRYPT, ['cost'=>10])
 INSERT INTO users (name, email, password, role) VALUES
-    ('Admin User',      'admin@shop.com',    '$2y$12$eImiTXuWVxfM37uY4JANjQ==hashed_placeholder_admin',    'admin'),
-    ('Shiva Lamichhane','customer@shop.com', '$2y$12$eImiTXuWVxfM37uY4JANjQ==hashed_placeholder_customer', 'customer');
+    ('Admin User',       'admin@shop.com',    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin'),
+    ('Shiva Lamichhane', 'customer@shop.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'customer');
 
 -- Products: mix of buy_now and auction
 INSERT INTO products (title, description, category, type, price, starting_price, seller_id) VALUES

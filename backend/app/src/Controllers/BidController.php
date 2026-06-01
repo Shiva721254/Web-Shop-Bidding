@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Services\Interfaces\IBidService;
 use App\Services\BidService;
 use App\Framework\Controller;
+use App\Framework\Auth;
 
 class BidController extends Controller
 {
@@ -24,32 +25,28 @@ class BidController extends Controller
 
             $result = $this->bidService->getByAuction($auctionId, $page, $limit);
             return $this->sendSuccessResponse($result);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
 
     public function create($vars = [])
     {
+        $authUser  = Auth::requireAuth();
         try {
             $auctionId = (int)($vars['auctionId'] ?? 0);
             $body      = $this->getJsonBody();
+            $amount    = isset($body['amount']) ? (float)$body['amount'] : null;
 
-            $userId = (int)($body['userId'] ?? 0);
-            $amount = isset($body['amount']) ? (float)$body['amount'] : null;
-
-            if ($userId <= 0) {
-                return $this->sendErrorResponse('userId is required', 422);
-            }
             if ($amount === null || $amount <= 0) {
                 return $this->sendErrorResponse('amount must be a positive number', 422);
             }
 
-            $bid = $this->bidService->placeBid($auctionId, $userId, $amount);
+            $bid = $this->bidService->placeBid($auctionId, $authUser->sub, $amount);
             return $this->sendSuccessResponse($bid, 201);
         } catch (\InvalidArgumentException $e) {
             return $this->sendErrorResponse($e->getMessage(), $e->getCode() ?: 422);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
         }
     }
