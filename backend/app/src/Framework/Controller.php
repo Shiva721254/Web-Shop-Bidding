@@ -31,14 +31,13 @@ class Controller
     protected function mapPostDataToClass(string $className): object
     {
         $input = file_get_contents('php://input');
-        $data = json_decode($input, true);
+        $data  = json_decode($input, true);
 
         if (!is_array($data)) {
             throw new \InvalidArgumentException('Request body must contain valid JSON');
         }
 
         $instance = new $className();
-        
         foreach ($data as $key => $value) {
             if (property_exists($instance, $key)) {
                 $instance->$key = $value;
@@ -46,5 +45,17 @@ class Controller
         }
 
         return $instance;
+    }
+
+    protected function getJsonBody(): array
+    {
+        $input = file_get_contents('php://input');
+        $data  = json_decode($input, true);
+
+        if (!is_array($data)) {
+            throw new \InvalidArgumentException('Request body must contain valid JSON');
+        }
+
+        return $data;
     }
 }

@@ -43,6 +43,10 @@ $dispatcher = simpleDispatcher(function (RouteCollector $r) {
     $r->addRoute('PUT',    '/products/{id}',  ['App\Controllers\ProductController', 'update']);
     $r->addRoute('DELETE', '/products/{id}',  ['App\Controllers\ProductController', 'delete']);
 
+    // Bid routes (nested under auctions)
+    $r->addRoute('GET',  '/auctions/{auctionId}/bids', ['App\Controllers\BidController', 'getByAuction']);
+    $r->addRoute('POST', '/auctions/{auctionId}/bids', ['App\Controllers\BidController', 'create']);
+
     // Auction routes
     $r->addRoute('GET',    '/auctions',       ['App\Controllers\AuctionController', 'getAll']);
     $r->addRoute('GET',    '/auctions/{id}',  ['App\Controllers\AuctionController', 'get']);
