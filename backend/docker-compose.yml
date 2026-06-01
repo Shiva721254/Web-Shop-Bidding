@@ -21,6 +21,8 @@ services:
             MYSQL_DATABASE: 'developmentdb'
         volumes:
             - mysqldata:/var/lib/mysql
+            - ./app/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+            - ./app/database/seeds.sql:/docker-entrypoint-initdb.d/02-seeds.sql
         ports:
             - 3306:3306
     phpmyadmin:

@@ -15,12 +15,17 @@ class AuctionService implements IAuctionService
         $this->repository = new AuctionRepository();
     }
 
-    /**
-     * @return Auction[]
-     */
-    public function getAll(): array
+    public function getAll(array $filters = [], int $page = 1, int $limit = 10): array
     {
-        return $this->repository->getAll();
+        $data  = $this->repository->getAll($filters, $page, $limit);
+        $total = $this->repository->countAll($filters);
+
+        return [
+            'data'  => $data,
+            'total' => $total,
+            'page'  => $page,
+            'limit' => $limit,
+        ];
     }
 
     public function getById(int $id): ?Auction
