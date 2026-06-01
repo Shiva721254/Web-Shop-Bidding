@@ -18,7 +18,7 @@ class OrderController extends Controller
 
     public function getAll()
     {
-        Auth::requireAuth();
+        Auth::requireRole('admin');
         try {
             $page   = max(1, (int)($_GET['page']  ?? 1));
             $limit  = min(100, max(1, (int)($_GET['limit'] ?? 10)));
@@ -31,9 +31,14 @@ class OrderController extends Controller
 
     public function getByUser($vars = [])
     {
-        Auth::requireAuth();
+        $authUser = Auth::requireAuth();
+        $userId   = (int)($vars['userId'] ?? 0);
+
+        if ($authUser->role !== 'admin' && $authUser->sub !== $userId) {
+            return $this->sendErrorResponse('Forbidden: you can only view your own orders', 403);
+        }
+
         try {
-            $userId = (int)($vars['userId'] ?? 0);
             $page   = max(1, (int)($_GET['page']  ?? 1));
             $limit  = min(100, max(1, (int)($_GET['limit'] ?? 10)));
             $result = $this->orderService->getByUser($userId, $page, $limit);
@@ -45,13 +50,18 @@ class OrderController extends Controller
 
     public function get($vars = [])
     {
-        Auth::requireAuth();
+        $authUser = Auth::requireAuth();
         try {
             $id    = (int)($vars['id'] ?? 0);
             $order = $this->orderService->getById($id);
+
             if (!$order) {
                 return $this->sendErrorResponse('Order not found', 404);
             }
+            if ($authUser->role !== 'admin' && $authUser->sub !== $order->userId) {
+                return $this->sendErrorResponse('Forbidden: you can only view your own orders', 403);
+            }
+
             return $this->sendSuccessResponse($order);
         } catch (\Exception) {
             return $this->sendErrorResponse('Internal server error', 500);
@@ -80,7 +90,7 @@ class OrderController extends Controller
 
     public function updateStatus($vars = [])
     {
-        Auth::requireAuth();
+        Auth::requireRole('admin');
         try {
             $id   = (int)($vars['id'] ?? 0);
             $body = $this->getJsonBody();
