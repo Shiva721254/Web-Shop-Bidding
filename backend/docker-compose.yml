@@ -12,6 +12,10 @@ services:
             dockerfile: PHP.Dockerfile
         volumes:
             - ./app:/app
+        environment:
+            # Set this to your production frontend URL when deploying
+            # Example: ALLOWED_ORIGIN=https://your-app.railway.app
+            ALLOWED_ORIGIN: ''
     mysql:
         image: mariadb:latest
         environment:
