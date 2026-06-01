@@ -4,26 +4,30 @@ namespace App\Models;
 
 class Auction
 {
-    public ?int $id;
-    public string $title;
-    public string $seller;
-    public string $category;
-    public string $endsAt;
-    public string $description;
-    public float $startingPrice;
-    public float $currentBid;
-    public string $status;
+    public ?int    $id           = null;
+    public ?int    $productId    = null;
+    public string  $title        = '';
+    public string  $description  = '';
+    public string  $category     = '';
+    public ?int    $sellerId     = null;
+    public float   $startingPrice = 0.0;
+    public ?float  $currentBid   = null;
+    public string  $endsAt       = '';
+    public string  $status       = 'open';
+    public ?int    $winnerId     = null;
 
     public function __construct(array $data = [])
     {
-        $this->id = $data['id'] ?? null;
-        $this->title = $data['title'] ?? '';
-        $this->seller = $data['seller'] ?? '';
-        $this->category = $data['category'] ?? '';
-        $this->endsAt = $data['endsAt'] ?? '';
-        $this->description = $data['description'] ?? '';
-        $this->startingPrice = (float)($data['startingPrice'] ?? 0);
-        $this->currentBid = (float)($data['currentBid'] ?? $this->startingPrice);
-        $this->status = $data['status'] ?? 'open';
+        $this->id            = isset($data['id'])             ? (int)$data['id']            : null;
+        $this->productId     = isset($data['product_id'])     ? (int)$data['product_id']    : null;
+        $this->title         = $data['title']                 ?? '';
+        $this->description   = $data['description']           ?? '';
+        $this->category      = $data['category']              ?? '';
+        $this->sellerId      = isset($data['seller_id'])      ? (int)$data['seller_id']     : null;
+        $this->startingPrice = (float)($data['starting_price'] ?? 0);
+        $this->currentBid    = isset($data['current_bid'])    ? (float)$data['current_bid'] : null;
+        $this->endsAt        = $data['ends_at']               ?? '';
+        $this->status        = $data['status']                ?? 'open';
+        $this->winnerId      = isset($data['winner_id'])      ? (int)$data['winner_id']     : null;
     }
 }
