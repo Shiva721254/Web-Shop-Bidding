@@ -4,10 +4,11 @@ namespace App\Services;
 
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Repositories\IOrderRepository;
+use App\Repositories\Interfaces\IOrderRepository;
 use App\Repositories\OrderRepository;
-use App\Repositories\IProductRepository;
+use App\Repositories\Interfaces\IProductRepository;
 use App\Repositories\ProductRepository;
+use App\Services\Interfaces\IOrderService;
 
 class OrderService implements IOrderService
 {

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Services\IBidService;
+use App\Services\Interfaces\IBidService;
 use App\Services\BidService;
 use App\Framework\Controller;
 

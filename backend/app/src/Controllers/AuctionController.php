@@ -3,7 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Auction;
-use App\Services\IAuctionService;
+use App\Services\Interfaces\IAuctionService;
 use App\Services\AuctionService;
 use App\Framework\Controller;
 
