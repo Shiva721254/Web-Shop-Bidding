@@ -28,10 +28,14 @@ class Controller
      * @param string $className The fully qualified class name
      * @return object|null Returns an instance of the class or null if data is invalid
      */
-    protected function mapPostDataToClass(string $className): ?object
+    protected function mapPostDataToClass(string $className): object
     {
         $input = file_get_contents('php://input');
         $data = json_decode($input, true);
+
+        if (!is_array($data)) {
+            throw new \InvalidArgumentException('Request body must contain valid JSON');
+        }
 
         $instance = new $className();
         

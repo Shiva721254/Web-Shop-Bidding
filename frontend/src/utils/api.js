@@ -8,7 +8,7 @@ import config from '../config.js';
 
 /**
  * Build the full API URL for an endpoint
- * @param {string} endpoint - API endpoint (e.g., '/articles')
+ * @param {string} endpoint - API endpoint (e.g., '/auctions')
  * @returns {string} Full API URL
  */
 function buildApiUrl(endpoint) {
@@ -19,7 +19,7 @@ function buildApiUrl(endpoint) {
 
 /**
  * Make a GET request to the API
- * @param {string} endpoint - API endpoint (e.g., '/articles')
+ * @param {string} endpoint - API endpoint (e.g., '/auctions')
  * @param {RequestInit} options - Fetch options
  * @returns {Promise<Response>}
  */

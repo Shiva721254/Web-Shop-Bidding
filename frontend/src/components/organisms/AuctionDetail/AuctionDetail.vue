@@ -2,16 +2,16 @@
   <article class="max-w-4xl mx-auto">
     <header class="mb-6">
       <div class="mb-4">
-        <CategoryBadge :category="article.category" />
+        <CategoryBadge :category="auction.category" />
       </div>
       
       <Heading :level="1" size="3xl" class="mb-4">
-        {{ article.title }}
+        {{ auction.title }}
       </Heading>
       
-      <ArticleMeta 
-        :author="article.author" 
-        :published="article.published" 
+      <AuctionMeta 
+        :seller="auction.seller" 
+        :endsAt="auction.endsAt" 
         class="mb-6"
       />
     </header>
@@ -23,7 +23,7 @@
         color="default"
         class="whitespace-pre-line leading-relaxed"
       >
-        {{ article.content }}
+        {{ auction.description }}
       </Text>
     </div>
   </article>
@@ -32,15 +32,15 @@
 <script setup>
 import Heading from '../../atoms/Heading/Heading.vue';
 import Text from '../../atoms/Text/Text.vue';
-import ArticleMeta from '../../molecules/ArticleMeta/ArticleMeta.vue';
+import AuctionMeta from '../../molecules/AuctionMeta/AuctionMeta.vue';
 import CategoryBadge from '../../molecules/CategoryBadge/CategoryBadge.vue';
 
 defineProps({
-  article: {
+  auction: {
     type: Object,
     required: true,
     validator: (value) => {
-      return value.id && value.title && value.author && value.category && value.published && value.content;
+      return value.id && value.title && value.seller && value.category && value.endsAt && value.description;
     },
   },
 });

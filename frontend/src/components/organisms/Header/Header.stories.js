@@ -10,7 +10,7 @@ export const Default = {
   args: {
     navigationLinks: [
       { name: 'Home', href: '/' },
-      { name: 'Articles', href: '/articles' },
+      { name: 'Auctions', href: '/auctions' },
       { name: 'About', href: '/about' },
       { name: 'Contact', href: '/contact' },
     ],
