@@ -8,7 +8,6 @@
       <button class="btn btn-primary" @click="openForm()">+ Add Product</button>
     </div>
 
-    <!-- Product form modal -->
     <div v-if="showForm" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" @click.self="showForm = false">
       <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-5">{{ editing ? 'Edit Product' : 'New Product' }}</h2>

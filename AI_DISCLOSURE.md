@@ -1,20 +1,20 @@
 # AI Disclosure Statement
-**Web Development 2 — Web Shop with Buying & Bidding**
-**Student: Shiva Lamichhane**
+Web Development 2 — Web Shop with Buying & Bidding
+Student: Shiva Lamichhane
 
 ---
 
-During the development of this project I used **Claude** (an AI assistant developed by Anthropic) as a development tool throughout the project.
+During the development of this project I used Claude (an AI assistant developed by Anthropic) as a development tool throughout the project.
 
 ## How AI was used
 
-- **Code generation** — Claude helped generate boilerplate code for the PHP backend (MVC layers, repositories, services, controllers) and Vue.js frontend components. I reviewed each generated file, understood its purpose, and decided whether to include, modify, or reject it.
+- Code generation — Claude helped generate boilerplate code for  Vue.js frontend components. I reviewed each generated file, understood its purpose, and decided whether to include, modify, or reject it.
 
-- **Architecture decisions** — I discussed the project structure with Claude, including the choice of MVC pattern, the repository/service separation, the Pinia store design, and the JWT implementation approach. Claude suggested approaches and I evaluated them against the course material.
+- Architecture decisions — I discussed the project structure with Claude,  the Pinia store design, and the JWT implementation approach. Claude suggested approaches and I evaluated them against the course material.
 
-- **Debugging** — When errors occurred (such as the `firebase/php-jwt` security advisory issue), I used Claude to help diagnose and resolve them. The JWT implementation was ultimately replaced with a custom HS256 implementation using PHP's built-in `hash_hmac` function.
+- Debugging — When errors occurred (such as the `firebase/php-jwt` security advisory issue), I used Claude to help diagnose and resolve them. The JWT implementation was ultimately replaced with a custom HS256 implementation using PHP's built-in `hash_hmac` function.
 
-- **Git workflow** — Claude assisted in structuring the feature branch workflow (develop → feature branches → main).
+- Git workflow — Claude assisted in structuring the feature branch workflow (develop → feature branches → main).
 
 ## My own contributions
 

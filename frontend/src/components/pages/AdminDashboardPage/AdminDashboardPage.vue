@@ -72,7 +72,7 @@ onMounted(async () => {
     stats.value[1].value = aBody.total ?? 0
     stats.value[2].value = oBody.total ?? 0
   } catch {
-    // stats remain 0
+    // stats stay 0
   } finally {
     loading.value = false
   }
