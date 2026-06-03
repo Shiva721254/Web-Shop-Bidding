@@ -13,21 +13,15 @@ See [src/components/README.md](src/components/README.md) for the component struc
 
 ## Start
 
-```bash
 npm install
 npm run dev
-```
 
 ## Other Commands
 
-```bash
 npm run build
 npm run storybook
 npm run build-storybook
-```
 
 Set a different API endpoint with:
 
-```env
 VITE_API_DOMAIN=http://localhost
-```

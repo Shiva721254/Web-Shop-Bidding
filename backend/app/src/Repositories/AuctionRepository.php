@@ -18,14 +18,13 @@ class AuctionRepository implements IAuctionRepository
 
     public function closeExpired(): void
     {
-        // Mark all open auctions whose end time has passed as closed
         $this->db->exec("
             UPDATE auctions
             SET status = 'closed'
             WHERE status = 'open' AND ends_at < NOW()
         ");
 
-        // Set winner_id to the user who placed the highest bid
+        // winner = highest bidder
         $stmt = $this->db->query("
             SELECT a.id, b.user_id
             FROM auctions a

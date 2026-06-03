@@ -14,7 +14,6 @@
 
     <div v-else-if="auction">
 
-      <!-- Winner banner -->
       <div v-if="auction.status === 'closed' && isWinner"
         class="mb-6 bg-green-50 border border-green-200 rounded-2xl p-5 flex items-center gap-4">
         <span class="text-3xl">🏆</span>
@@ -24,7 +23,6 @@
         </div>
       </div>
 
-      <!-- Auction closed, not winner -->
       <div v-else-if="auction.status === 'closed' && authStore.isLoggedIn && !isWinner"
         class="mb-6 bg-gray-50 border border-gray-200 rounded-2xl p-5 flex items-center gap-4">
         <span class="text-3xl">⏰</span>
@@ -58,7 +56,6 @@
           </div>
         </div>
 
-        <!-- Countdown timer -->
         <div class="mb-6">
           <div v-if="auction.status === 'open'" class="bg-amber-50 border border-amber-200 rounded-xl p-4">
             <p class="text-xs text-amber-600 font-medium mb-2 uppercase tracking-wide">Time Remaining</p>
@@ -77,7 +74,6 @@
           </div>
         </div>
 
-        <!-- Bid form -->
         <div v-if="auction.status === 'open' && !countdown.expired" class="border-t border-gray-100 pt-6">
           <h2 class="text-lg font-semibold text-gray-900 mb-3">Place a Bid</h2>
           <div v-if="!authStore.isLoggedIn" class="text-center py-4">
@@ -102,7 +98,6 @@
         </div>
       </div>
 
-      <!-- Bid history -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
         <h2 class="text-xl font-bold text-gray-900 mb-4">
           Bid History <span class="text-gray-400 font-normal text-base">({{ bids.length }})</span>
@@ -165,7 +160,7 @@ function updateCountdown() {
   if (diff <= 0) {
     countdown.value = { expired: true, units: [] }
     clearInterval(timerRef)
-    // Re-fetch so backend closes the auction and sets winner
+    // delay so backend has time to close & assign winner
     setTimeout(fetchAuction, 1500)
     return
   }
